@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const uri = "mongodb+srv://dbUser:dbUserPassword@cluster0.nlkd3d0.mongodb.net/?retryWrites=true&w=majority"
+let uri:any = process.env.MONGODB_URI
 export async function connect() {
     try {
         mongoose.connect(uri,{});

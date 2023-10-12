@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import jwt  from "jsonwebtoken";
-let JWT_SECRET = "1234567890"
+let JWT_SECRET:any = process.env.TOKEN_SECRET;
 
 export const getDataFromToken = (request: NextRequest) => {
     try {

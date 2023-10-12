@@ -1,95 +1,46 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+export default function Profile() {
+    const router = useRouter();
+    const [data, setData] = useState(null);
+    const logout = async () => {
+        try {
+            await axios.get("/api/users/logout");
+            router.push("/login");
+        }
+        catch (error:any) {
+            console.log("logout failed :", error.message);
+        }
+    }
+    const getUserDetails = async () => {
+        const res = await axios.get("/api/users/me");
+        setData(res.data.data.username);
+    }
+    useEffect(() => {
+        getUserDetails();
+    },[])
+    
+    return (
+      <main>
+
+        <div className="bg-black flex flex-row  min-h-screen py-2 justify-center">
+          <div className="border-2 w-1/3 h-1/4 text-10xl  flex flex-col items-center  content-center justify-center py-2 bg-black">
+            <h1 className=" text-white text-2xl font-bold p-2 m-2">Home</h1>
+            </div>
+            <div className="border-2 w-1/3 h-1/4 text-10xl  flex flex-col items-center  content-center justify-center py-2 bg-black">
+            <Link href={`/profile/${data}`} className="w-full h-full justify-center items-center flex">
+            <h2 className="text-white text-2xl font-bold p-2 m-2 w-"> My Profile </h2></Link>
+            </div>
+            <div className="border-2 w-1/3 h-1/4 text-10xl  flex flex-col items-center  content-center justify-center py-2 bg-black">
+        <button className=" text-red-500 text-2xl font-bold p-2 m-2" onClick={logout}>
+            logout
+            </button>
         </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+        </div>
+      </main>
+    );
 }

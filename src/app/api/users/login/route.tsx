@@ -5,13 +5,12 @@ import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import next from 'next';
 
-let TOKEN_SECRET = "1234567890";
+let TOKEN_SECRET =process.env.TOKEN_SECRET;
 
 connect()
 export  async function  POST (req: NextRequest) {
     try {
         const reqBody = await req.json();
-        console.log("reqBody :",reqBody);
 
         const {username , password} = reqBody;
         const user = await User.findOne({username});
@@ -26,10 +25,7 @@ export  async function  POST (req: NextRequest) {
             username: user.username,
             email: user.email,
         }
-        console.log("tokenData :",tokenData);
-        console.log("process.env.TOKEN_SECRET :",TOKEN_SECRET);
         const token = await jwt.sign(tokenData,TOKEN_SECRET!, {expiresIn: "1d"});
-        console.log("token :",token);
 
         const response = NextResponse.json({message: "login success"},{status: 200});
         response.cookies.set("token",token,{httpOnly: true});

@@ -3,6 +3,7 @@
 import React, { use, useEffect } from "react";
 import {useRouter} from "next/navigation";
 import axios from "axios";
+import Link from "next/link";
 
 export default function login(){
 
@@ -11,21 +12,17 @@ export default function login(){
         username:"",
         password:"",
     })
-    const [loading,setLoading]= React.useState(false)
+    const [loginFailed,setLoginFailed]= React.useState("")
     const [buttonDisabled,setButtonDisabled]= React.useState(false) 
     const onLogin = async () => {
         try{
-            setLoading(true)
             const response = await axios.post("/api/users/login",user);
-            console.log("login response :",response.data);
             router.push("/");
         }
         catch(error: any){
-            console.log("login failed :",error.message);
+            setLoginFailed(error.response.data.message);
         }
-        finally{
-            setLoading(false)
-        }
+    
     }
 
         useEffect(() => {  
@@ -36,35 +33,52 @@ export default function login(){
                 setButtonDisabled(true);
             }
         });
-
-
     return(
-        <div className="bg-black flex flex-col items-center w-screen h-screen justify-center">
-            <div className="border-2 w-2/4 h-2/4  flex flex-col items-center  content-center justify-center py-2 bg-black">
+        <div className="bg-black flex  items-center w-screen h-screen justify-center">
+            <span className="circle animate-loader animation-delay-400"></span>
 
-        <h1 className="text-2xl font-bold flex jusitfy-center text-white">{loading ? "loading..." : "login"}</h1>
-        <label className=" text-white p-3" htmlFor="username">username</label>
+        <div className="border-2 w-2/4 h-2/4 text-10xl flex flex-col items-center  content-center justify-center py-2 bg-black">
+        <div className="flex justify-center p-6">
+        <h1 className="text-4xl font-bold flex w-full h-full jusitfy-center text-white">{"login"}</h1>
+        </div>
+        <div>
+        <label className=" text-white p-3" htmlFor="username"></label>
         <input
-        className="border-2 border-black p-2"
-            id="username"
-            type="text"
-            value={user.username}
-            placeholder="username"
-            onChange={(e) => setUser({...user, username: e.target.value})}
-            />
-        <label className=" text-white p-3" htmlFor="password">password</label>
+        className="border-2 border-black p-2 rounded-md"
+        id="username"
+        type="text"
+        value={user.username}
+        placeholder="username"
+        onChange={(e) => setUser({...user, username: e.target.value})}
+        />
+        </div>
+        <div>
+
+        <label className=" text-white p-3" htmlFor="password"></label>
         <input
-         className="border-2 border-black p-2"
-            placeholder="password"
-            id="password"
-            type="password"
-            value={user.password}
-            onChange={(e) => setUser({...user, password: e.target.value})}
-            />
+         className="border-2 border-black p-2 rounded-md"
+         placeholder="password"
+         id="password"
+         type="password"
+         value={user.password}
+         onChange={(e) => setUser({...user, password: e.target.value})}
+         />
+            <div>
+            {loginFailed.length ? <div className="text-red-500 flex   justify-center">{loginFailed}</div> : null}
+                </div>
+         </div>
             <div className="flex justify-center p-3">
-        <button onClick={onLogin} className=" hover:border-3 border-2 hover:border-white border-black bg-white w-64 h-12 text-black hover:bg-black hover:text-white  rounded-md" disabled={buttonDisabled}>
-            login
-        </button>
+                <button onClick={onLogin} className="hover:cursor-pointer hover:border-3 border-2 hover:border-white border-black bg-white w-64 h-12 text-black hover:bg-black hover:text-white  rounded-md" disabled={buttonDisabled}>
+                    login
+                </button>
+            
+            </div>
+            <div className="flex justify-center p-3 content-center">
+                <button className="hover:cursor-pointer hover:border-3 border-2 hover:border-white border-black bg-white w-64 h-12 text-black hover:bg-black hover:text-white  rounded-md">
+                    <Link href="/signup" className="w-full h-full flex justify-center items-center">
+                        signup
+                    </Link>
+                </button>
             </div>
             </div>
     </div>
