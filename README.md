@@ -1,4 +1,7 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Hosted on Vercel
+[https://my-store-app-sigma.vercel.app/](https://my-store-app-sigma.vercel.app/)
+
 
 ## Getting Started
 
