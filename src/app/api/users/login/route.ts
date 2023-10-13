@@ -3,11 +3,10 @@ import User from '@/models/userModel';
 import {NextRequest, NextResponse} from 'next/server';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import next from 'next';
 
+connect();
 let TOKEN_SECRET =process.env.TOKEN_SECRET;
 
-connect()
 export  async function  POST (req: NextRequest) {
     try {
         const reqBody = await req.json();

@@ -3,6 +3,10 @@ import React, { use, useEffect } from "react";
 import {useRouter} from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
+import { type } from "os";
+
+
+
 
 export default function login(){
 
@@ -67,7 +71,7 @@ export default function login(){
          onChange={(e) => setUser({...user, password: e.target.value})}
          />
             <div>
-            {loginFailed.length ? <div className="text-red-500 flex   justify-center">{loginFailed}</div> : null}
+            {loginFailed ? <div className="text-red-500 flex   justify-center">{loginFailed}</div> : null}
                 </div>
          </div>
             <div className="flex justify-center p-3">

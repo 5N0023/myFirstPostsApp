@@ -39,17 +39,10 @@ export default function signup() {
     const [signupFailed,setSignupFailed]= React.useState("")
     const [buttonDisabled,setButtonDisabled]= React.useState(false) 
     const onsignup = async () => {
-        if (signupCheck(user) !== "") {
-            setSignupFailed(signupCheck(user));
-            return;
-        }
-        if(user.password.length < 8){
-            setSignupFailed("Password must be at least 8 characters long");
-            return;
-        }
-
-        try{
+    try{
             const response = await axios.post("/api/users/signup",user);
+            setButtonDisabled(true);
+            console.log(response);
             router.push("/login");
         }
         catch(error: any){

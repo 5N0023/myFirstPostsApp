@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
     verifyTokenExpire: {
         type: Date,
     },
+    profilePic: {
+        type: String,
+        default: '',
+    },
 });
 
 let User: any;

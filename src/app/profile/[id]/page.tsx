@@ -1,40 +1,29 @@
-"use client";
 
-import { get } from 'http';
-import { use, useEffect, useState } from 'react';
-import axios from 'axios';
-import { redirect, useRouter } from 'next/navigation';
-import { render } from 'react-dom';
+"use client";
+import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
+import { UploadButton } from "../../../utils/uploadthing";
+import "@uploadthing/react/styles.css";
 
 
 
 export default function UserProfile({params}: any) {
     const router = useRouter();
     const [loading,setLoading]= useState(true)
-    let imageUrl = "/usersImages/" + params.id + ".jpeg";
-    const [imageExist, setImage] = useState(false);
-    const fetchImaeg =  () => {
-         fetch(imageUrl)
-        .then(res => {
-            if (res.status === 200) {
-                setImage(true);
-            }
-            else {
-                setImage(false);
-            }
-        })
-    }
-    useEffect(() => {
-        fetchImaeg();
-    },[])
-    const [data, setData] = useState(null);
+    const [imageUrl, setUserImage] = useState<string>("/usersImages/default.webp");
     const getUserDetails = async () => {
         const res = await axios.get("/api/users/me");
         setData(res.data.data.username);
+        if(res.data.data.profilePic && res.data.data.profilePic.length > 0)
+            setUserImage(res.data.data.profilePic);
     }
+
+    const [data, setData] = useState(null);
     useEffect(() => {
         getUserDetails();
-    },[])
+    },[imageUrl])
     const [userExist, setUserExist] = useState(false);
 
     const userExistCheck = async () => {
@@ -61,38 +50,16 @@ export default function UserProfile({params}: any) {
             console.log("logout failed :", error.message);
         }
     }
-    const[File, setFile] = useState<File>();
-    const[fileError, setFileError] = useState<string>("");
-
-    useEffect(() => {
-        if(File){
-            if(File.size > 1024 * 1024 * 5){
-                setFileError("File size should be less than 5mb");
-            }
-            else if(File.type !== "image/jpeg" && File.type !== "image/png"){
-                setFileError("File format is incorrect");
-            }
-            else{
-                setFileError("");
-            }
-        }
-    });
-    const uploadImage = async (e : any) => {
-        e.preventDefault();
-        if(!File || fileError.length > 0)
-            return;
+    const updateUserProfilePic = async (url: string) => {
         try {
-            const data = new FormData();
-            data.set("file", File);
-            data.append("username", params.id);
-            const res = await fetch("/api/users/upload", {
-                method: "POST",
-                body: data
-            });
+            const req = {profilePic: url, username: data};
+            await axios.post("/api/users/updateProfilePic", req);
+            setUserImage(url);
         }
-            catch (error:any) {
-            }
+        catch (error:any) {
+            console.log("update profile pic failed :", error.message);
         }
+    }
     
     if(loading){
         return (
@@ -103,26 +70,40 @@ export default function UserProfile({params}: any) {
     }
     if(!userExist){
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen py-2">
+            <div className="flex flex-col items-center justify-center py-2">
                 <h1>User not found</h1>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen py-2">
+        <div className="flex flex-col items-center justify-center py-2">
             <h1>Profile</h1>
-            { imageExist ? <img src={imageUrl} alt="user image" className="w-1/3 h-1/4 rounded-full"/> : <img src="/usersImages/default.png" alt="user image" className="w-1/3 h-1/4 rounded-full"/>}
-            <div id="upload picture">
-            </div>
-            <h2 className=" p-2 ml-2 rounded bg-orange-500 text-black">{params.id}</h2>
+            <img src={imageUrl} alt="user image" className="w-1/3 h-1/4 rounded-full"/>
+            <div className=" p-2 rounded bg-orange-500 flex flex-col items-center justify-center text-black">
+            <h2 >{params.id}</h2>
+                </div>
             {data === params.id ? <div>
-                    <input type="file" name="file" id="file" className="" onChange= {(e) => setFile(e.target.files![0])}/>
-                    <button className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={uploadImage}>Upload</button>
+            <div className="w-5 p-8 m-8 h-5 flex flex-col items-center justify-center py-2">
+            <UploadButton
+                endpoint="imageUploader"
+                onClientUploadComplete={(res:any) => {
+                // Do something with the response
+                updateUserProfilePic(res[0].fileUrl);
+                }}
+                onUploadError={(error: Error) => {
+                // Do something with the error.
+                console.log(error);
+                }}
+            />
+            </div>
+                <div className="flex flex-col items-center justify-center  py-2">
                     <button className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={logout}>Logout</button>
-                    {fileError ? <div className="text-red-500">{fileError}</div> : null}
+                </div>
             </div>
             : null}
         </div>
     );
 }
+
+        
