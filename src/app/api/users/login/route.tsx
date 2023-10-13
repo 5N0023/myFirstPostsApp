@@ -13,6 +13,8 @@ export  async function  POST (req: NextRequest) {
         const reqBody = await req.json();
 
         const {username , password} = reqBody;
+        if(!username || !password)
+            return NextResponse.json({message: "please fill in all fields"},{status: 400});
         const user = await User.findOne({username});
         if(!user)
             return NextResponse.json({message: "user not found"},{status: 404});
