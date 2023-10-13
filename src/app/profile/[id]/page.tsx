@@ -29,7 +29,8 @@ export default function UserProfile({params}: any) {
     const userExistCheck = async () => {
         const res = await axios.post("/api/users/search/", {username: params.id});
         if (res.status === 200) {
-            setUserImage(res.data.user.profilePic)
+            if(res.data.user.profilePic.lenght > 0)
+                setUserImage(res.data.user.profilePic)
             setUserExist(true);
         }
         else {
