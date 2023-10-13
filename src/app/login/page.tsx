@@ -4,6 +4,7 @@ import React, { use, useEffect } from "react";
 import {useRouter} from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
+import { error } from "console";
 
 export default function login(){
 
@@ -15,6 +16,10 @@ export default function login(){
     const [loginFailed,setLoginFailed]= React.useState("")
     const [buttonDisabled,setButtonDisabled]= React.useState(false) 
     const onLogin = async () => {
+        if (user.username.length === 0 || user.password.length === 0) {
+            setLoginFailed("Please fill in all fields");
+            return;
+        }
         try{
             const response = await axios.post("/api/users/login",user);
             router.push("/");

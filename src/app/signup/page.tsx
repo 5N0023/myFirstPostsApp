@@ -6,6 +6,27 @@ import axios from "axios";
 import { Finlandica } from "next/font/google";
 import Link from "next/link";
 
+const emailpattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+const passwordpattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+const usernamepattern = /^[a-zA-Z0-9]+$/;
+
+function signupCheck(user: any) {
+    if (user.username.length === 0 || user.password.length === 0 || user.email.length === 0) {
+        return "Please fill in all fields"
+    }
+    if (!usernamepattern.test(user.username)) {
+        return "Username must only contain letters and numbers";
+    }
+    if (!emailpattern.test(user.email)) {
+        return "Please enter a valid email";
+    }
+    if (!passwordpattern.test(user.password)) {
+        return "Password must contain at least one uppercase letter, one lowercase letter, and one number";
+    }
+        
+    return "";
+}
+
 
 export default function signup() {
     const router = useRouter();
@@ -17,6 +38,15 @@ export default function signup() {
     const [signupFailed,setSignupFailed]= React.useState("")
     const [buttonDisabled,setButtonDisabled]= React.useState(false) 
     const onsignup = async () => {
+        if (signupCheck(user) !== "") {
+            setSignupFailed(signupCheck(user));
+            return;
+        }
+        if(user.password.length < 8){
+            setSignupFailed("Password must be at least 8 characters long");
+            return;
+        }
+
         try{
             const response = await axios.post("/api/users/signup",user);
             router.push("/login");
@@ -76,6 +106,8 @@ export default function signup() {
          value={user.password}
          onChange={(e) => setUser({...user, password: e.target.value})}
          />
+            </div>
+         <div>
             {signupFailed ? <div className="text-red-500  flex justify-center p-3 content-center">{signupFailed}</div> : null}
          </div>
             <div className="flex justify-center p-3">
