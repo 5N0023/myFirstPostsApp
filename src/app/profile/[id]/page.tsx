@@ -16,19 +16,20 @@ export default function UserProfile({params}: any) {
     const getUserDetails = async () => {
         const res = await axios.get("/api/users/me");
         setData(res.data.data.username);
-        if(res.data.data.profilePic && res.data.data.profilePic.length > 0)
-            setUserImage(res.data.data.profilePic);
     }
 
     const [data, setData] = useState(null);
     useEffect(() => {
         getUserDetails();
+        userExistCheck();
     },[imageUrl])
+
     const [userExist, setUserExist] = useState(false);
 
     const userExistCheck = async () => {
         const res = await axios.post("/api/users/search/", {username: params.id});
         if (res.status === 200) {
+            setUserImage(res.data.user.profilePic)
             setUserExist(true);
         }
         else {
@@ -36,10 +37,10 @@ export default function UserProfile({params}: any) {
         }
     }
     useEffect(() => {
-        userExistCheck();
+        
         setLoading(false);
 
-    },[])
+    },[imageUrl])
 
     const logout = async () => {
         try {
