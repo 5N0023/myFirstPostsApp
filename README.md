@@ -1,6 +1,6 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 ## Hosted on Vercel
-[https://my-first-project-with-nextjs-9xyw5cp4q-5n0023s-projects.vercel.app/](https://my-store-app-sigma.vercel.app](https://my-first-project-with-nextjs-9xyw5cp4q-5n0023s-projects.vercel.app/)
+[https://my-first-project-with-nextjs-9xyw5cp4q-5n0023s-projects.vercel.app/](https://my-first-project-with-nextjs-9xyw5cp4q-5n0023s-projects.vercel.app/)
 
 ## Getting Started
 
