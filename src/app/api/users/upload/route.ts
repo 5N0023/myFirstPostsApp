@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { writeFile } from "fs/promises";
 import {join} from 'path';
 
-
 export    async function POST(request: NextRequest) {
     try
     {
@@ -25,5 +24,4 @@ export    async function POST(request: NextRequest) {
         console.log(err);
         return NextResponse.json({message:"Internal server error"},{status:500});
     }
-
 }

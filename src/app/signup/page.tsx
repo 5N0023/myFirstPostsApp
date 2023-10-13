@@ -11,20 +11,21 @@ const passwordpattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 const usernamepattern = /^[a-zA-Z0-9]+$/;
 
 function signupCheck(user: any) {
+    let signupFailed:any = [];
     if (user.username.length === 0 || user.password.length === 0 || user.email.length === 0) {
-        return "Please fill in all fields"
+        return "Please fill in all fields\n";
     }
     if (!usernamepattern.test(user.username)) {
-        return "Username must only contain letters and numbers";
+        signupFailed += "Username must contain only letters and numbers\n";
     }
     if (!emailpattern.test(user.email)) {
-        return "Please enter a valid email";
+        signupFailed += "Invalid email\n";
     }
     if (!passwordpattern.test(user.password)) {
-        return "Password must contain at least one uppercase letter, one lowercase letter, and one number";
+        signupFailed += "Password must contain at least one uppercase letter, one lowercase letter and one number\n";
     }
         
-    return "";
+    return signupFailed;
 }
 
 
@@ -108,7 +109,11 @@ export default function signup() {
          />
             </div>
          <div>
-            {signupFailed ? <div className="text-red-500  flex justify-center p-3 content-center">{signupFailed}</div> : null}
+            {signupFailed.length && signupFailed.split("\n").map((line: any) => {
+                return (
+                    <div className="text-red-500  flex justify-center content-center">{line}</div>
+                )
+            })}
          </div>
             <div className="flex justify-center p-3">
                 <button onClick={onsignup} className="hover:cursor-pointer hover:border-3 border-2 hover:border-white border-black bg-white w-64 h-12 text-black hover:bg-black hover:text-white  rounded-md"> 

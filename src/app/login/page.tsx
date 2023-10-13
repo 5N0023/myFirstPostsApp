@@ -1,10 +1,8 @@
 "use client";
-
 import React, { use, useEffect } from "react";
 import {useRouter} from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
-import { error } from "console";
 
 export default function login(){
 
