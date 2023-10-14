@@ -4,6 +4,8 @@ import { connect } from "@/dbConfig/dbConfig";
 
 // Initialize the database connection
 connect();
+export const revalidate=0 ;
+export const dynamic = "force-dynamic";
 
 // Check if user exists and return the last 10 posts
 export async function GET(req: NextRequest) {
@@ -16,7 +18,11 @@ export async function GET(req: NextRequest) {
 
         const res = NextResponse.json({ message: "Posts found", posts }, { status: 200 });
         // vercel cache Disable
-        res.headers.set('Cache-Control', 'no-store, max-age=0');
+
+        //Cache-Control: s-maxage=60 Vercel-CDN-Cache-Control: max-age=300, s-maxage=1
+        res.headers.set('Cache-Control', 's-maxage=0');
+        res.headers.set('Vercel-CDN-Cache-Control', 'max-age=0, s-maxage=0');
+        
         res.headers.set('X-Vercel-Cache', 'MISS');
         return res;
     } catch (error: any) {
