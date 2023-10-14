@@ -11,7 +11,7 @@ connect();
 export  async function  GET (req: NextRequest) {
     try {
         // get last 10 posts
-        const posts = await Post.find().limit(10);
+        const posts = await Post.find().sort({ createdAt: -1 }).limit(10);
         if(!posts)
             return NextResponse.json({message: "posts not found"},{status: 202});
         else 
