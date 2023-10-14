@@ -11,10 +11,11 @@ export default function Profile() {
     const router = useRouter();
 
     const [posts,setPosts] = useState<any>([]);
-
+    const [refresh,setRefresh] = useState<boolean>(false);
     const [postDesc, setPostDesc] = useState<string>("")
     const [postImageUrl,setPostImageUrl] =useState<string>("");
     const [error, setError] = useState<string>("");
+    const [disable,setDisable] = useState<boolean>(false);
     const logout = async () => {
         try {
             await axios.get("/api/users/logout");
@@ -34,20 +35,24 @@ export default function Profile() {
         setPosts(res.data.posts);
     }
     const createNewPost = async ()=>{
-        if(postDesc.length === 0 && postImageUrl.length === 0)
+        if((postDesc.length === 0 && postImageUrl.length === 0) || disable)
         {
             setError("post must have desc or image");
             return;
         }
-    const NewPost ={username:data ,desc:postDesc,img:postImageUrl}
-    try{
-        const res = await axios.post("/api/posts/newPost",NewPost)
-        console.log(res);
-    }
-    catch(err)
-    {
-        console.log(err);
-    }
+        const NewPost ={username:data ,desc:postDesc,img:postImageUrl}
+        try{
+            setDisable(true);
+            const res = await axios.post("/api/posts/newPost",NewPost)
+            if(res)
+                setRefresh(false);
+            console.log(res);
+        }
+        catch(err)
+        {
+            console.log(err);
+        }
+        setDisable(false);
     }
 
     useEffect(() => {
@@ -57,7 +62,7 @@ export default function Profile() {
         console.log("get posts");
         getPosts();
         console.log(posts);
-    },[])
+    },[refresh])
 
     return (
         <main className="flex flex-col items-center justify-center w-full h-full">
@@ -99,6 +104,9 @@ export default function Profile() {
                 ) : null}
                 <div className="w-32 px-4">
                 <button className="py-2 bg-blue-800 text-white   w-full h-full" onClick={createNewPost}>Post</button>
+                    </div>
+                    <div className="w-32 px-4 py-4 flex justify-center items-center">
+                        <button className="py-2 bg-blue-800 text-white   w-full h-full" onClick={()=>setRefresh(!refresh)}>refresh</button>
                     </div>
                 <div className="flex flex-col items-center justify-center w-2/4 px-2 py-8">
                 {posts.length !== 0 ? posts.map((post: any, key: number) => {
