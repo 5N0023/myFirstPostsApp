@@ -9,6 +9,7 @@ import { UploadButton } from "../utils/uploadthing";
 
 export default function Profile() {
     const router = useRouter();
+    const [postsNumber,setPostNumbers] = useState<number>(10);
 
     const [posts,setPosts] = useState<any>([]);
     const [refresh,setRefresh] = useState<boolean>(false);
@@ -35,7 +36,7 @@ export default function Profile() {
         setPostDesc(e.target.value);
     }
     const getPosts = async () => {
-        const res = await axios.get("/api/posts/getLastPosts");
+        const res = await axios.post("/api/posts/getLastPosts",{postNumber : postsNumber});
         setPosts(res.data.posts);
     }
     const createNewPost = async ()=>{
@@ -67,7 +68,7 @@ export default function Profile() {
     },[])
     useEffect(() => {
         getPosts();
-    },[refresh])
+    },[refresh , postsNumber])
 
     return (
         <main className="flex flex-col items-center justify-center w-full h-full">
@@ -132,6 +133,9 @@ export default function Profile() {
                     );
                 }) : <h1>no posts</h1>}
                     </div>
+                    <div className="flex flex-row items-center justify-center py-2 m-2 w-full px-2 border-2 border-black">
+                        <button className="py-2 bg-blue-800 text-white   w-full h-full" onClick={()=>setPostNumbers(postsNumber+5)}>load more</button>
+                        </div>
             </div>
         </main>
     );

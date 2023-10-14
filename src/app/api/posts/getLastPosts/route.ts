@@ -8,9 +8,11 @@ export const revalidate=0 ;
 export const dynamic = "force-dynamic";
 
 // Check if user exists and return the last 10 posts
-export async function GET(req: NextRequest) {
+export  async function  POST (req: NextRequest) {
     try {
-        const posts = await Post.find().sort({ createdAt: -1 }).limit(10);
+        const reqBody = await req.json();
+        const { postNumber } = reqBody;
+        const posts = await Post.find().sort({ createdAt: -1 }).limit(postNumber);
 
         if (!posts || posts.length === 0) {
             return NextResponse.json({ message: "No posts found" }, { status: 404 });
