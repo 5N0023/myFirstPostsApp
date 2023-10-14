@@ -34,6 +34,7 @@ export default function Profile() {
         setPosts(res.data.posts);
     }
     const createNewPost = async ()=>{
+        setRefresh(!refresh);
         if(postDesc.length === 0 && postImageUrl.length === 0)
         {
             setError("post must have desc or image");
@@ -49,12 +50,14 @@ export default function Profile() {
         console.log(err);
     }
     }
+    const [refresh,setRefresh] = useState(false);
+
     useEffect(() => {
         getUserDetails();
     },[])
     useEffect(() => {
         getPosts();
-    },[])
+    },[refresh])
 
     return (
         <main className="flex flex-col items-center justify-center w-full h-full">
