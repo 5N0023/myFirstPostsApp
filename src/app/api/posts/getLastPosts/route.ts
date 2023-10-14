@@ -14,12 +14,14 @@ export  async function  GET (req: NextRequest) {
         const posts = await Post.find().sort({ createdAt: -1 }).limit(10);
         const res = NextResponse.json({message: "posts not found"},{status: 202});;
         if(!posts)
-            return 
+            return res;
         else 
         {
             const res = NextResponse.json({message: "posts found", posts},{status: 200});
-            res.headers.set('Access-Control-Allow-Origin', '*');
-            res.headers.set('Cache-Control', 's-maxage=10, stale-while-revalidate');
+            res.headers.set('cache: ', 'no-store');
+            res.headers.set('Cache-Control', 's-maxage=1, stale-while-revalidate=59')
+            res.headers.set('CDN-Cache-Control', 'public, s-maxage=60')
+            res.headers.set('Vercel-CDN-Cache-Control', 'public, s-maxage=3600')
             return res;
         }
     }
