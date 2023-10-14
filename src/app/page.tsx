@@ -54,7 +54,9 @@ export default function Profile() {
         getUserDetails();
     },[])
     useEffect(() => {
+        console.log("get posts");
         getPosts();
+        console.log(posts);
     },[])
 
     return (
