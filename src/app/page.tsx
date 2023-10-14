@@ -30,11 +30,16 @@ export default function Profile() {
         const res = await axios.get("/api/users/me");
         setData(res.data.data.username);
     }
+
+    const handlePostInput = (e: any) => {
+        setPostDesc(e.target.value);
+    }
     const getPosts = async () => {
         const res = await axios.get("/api/posts/getLastPosts");
         setPosts(res.data.posts);
     }
     const createNewPost = async ()=>{
+        setRefresh(true);
         if((postDesc.length === 0 && postImageUrl.length === 0) || disable)
         {
             setError("post must have desc or image");
@@ -52,6 +57,8 @@ export default function Profile() {
         {
             console.log(err);
         }
+        setPostDesc("");
+        setPostImageUrl("");
         setDisable(false);
     }
 
@@ -59,9 +66,7 @@ export default function Profile() {
         getUserDetails();
     },[])
     useEffect(() => {
-        console.log("get posts");
         getPosts();
-        console.log(posts);
     },[refresh])
 
     return (
@@ -82,7 +87,7 @@ export default function Profile() {
             <div className="flex-col items-center justify-center py-2 w-full px-2">
                 <h1 className="text-black py-2">New Post : </h1>
                 <h1 className="text-black py-2">desc : </h1>
-                <input className="text-black py-2 px-4 rounded-lg border-2 border-black w-full h-32" type="text" placeholder="desc " onChange={(e) => setPostDesc(e.target.value)} />
+                <input className="text-black py-2 px-4 rounded-lg border-2 border-black w-full h-32" type="text" placeholder="desc " onChange={handlePostInput} value={postDesc} />
                 <div className="flex px-4 py-4">
                     <UploadButton
                     endpoint="imageUploader"
@@ -113,11 +118,13 @@ export default function Profile() {
                     return (
                         <div className="flex flex-col items-center justify-center py-2 m-2 w-full px-2 border-2 border-black" key={key}>
                             <div className="flex flex-row items-center justify-center py-2 w-full px-2 border-2 border-blue-500 bg-slate-500">
-                            <h1 className="text-black py-2 px-2">{post.username} </h1>
-                            <h1 className="text-black py-2"> At: {new Date(post.createdAt).toLocaleString()}</h1>
+                            <Link className="text-black flex  items-center justify-center  font-bold text-2xl w-full h-full " href={`/profile/${post.username}`}>{post.username}</Link>
                             </div>
+                            <div className="flex flex-row items-center justify-center py-2 w-full px-2 border-2 border-blue-500 bg-slate-500">
+                            <h1 className="text-black py-2"> At: {new Date(post.createdAt).toLocaleString()}</h1>
+                                </div>
                             { post.desc.length ? (
-                            <h1 className="text-black py-2">{post.desc}</h1>) : null}
+                            <h1 className="text-black py-2 bg-slate-400 w-full h-full px-2  flex flex-row items-center justify-center">{post.desc}</h1>) : null}
                             {post.img.length ? (
                                 <img className="w-1/2 h-1/2 py-2" src={post.img} alt="post img" />
                             ) : null}
