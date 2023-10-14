@@ -15,7 +15,9 @@ export async function GET(req: NextRequest) {
         }
 
         const res = NextResponse.json({ message: "Posts found", posts }, { status: 200 });
-        res.headers.set('Cache-Control', 's-maxage=0, stale-while-revalidate')
+        // vercel cache Disable
+        res.headers.set('Cache-Control', 'no-store, max-age=0');
+        res.headers.set('X-Vercel-Cache', 'MISS');
         return res;
     } catch (error: any) {
         return NextResponse.json({ message: error.message }, { status: 500 });
