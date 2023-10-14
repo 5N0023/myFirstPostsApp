@@ -50,9 +50,11 @@ export default function Profile() {
     }
     }
     useEffect(() => {
-        getPosts();
         getUserDetails();
     },[])
+    useEffect(() => {
+        getPosts();
+    },[posts])
 
     return (
         <main className="flex flex-col items-center justify-center w-full h-full">
