@@ -14,7 +14,6 @@ export async function POST (request: NextRequest)
                     desc,
                     img
                 });
-                console.log(newPost);
                 const savedPost = await newPost.save();
                 return NextResponse.json({message: 'Post created successfully', succes : true}, {status: 200});
             }
