@@ -1,4 +1,3 @@
-
 "use client";
 import axios from "axios";
 import Link from "next/link";
@@ -24,13 +23,14 @@ export default function UserProfile({params}: any) {
         userExistCheck();
     },[imageUrl])
 
-    const [userExist, setUserExist] = useState(false);
+    const [userExist, setUserExist] = useState(true);
 
     const userExistCheck = async () => {
         const res = await axios.post("/api/users/search/", {username: params.id});
         if (res.status === 200) {
-            if(res.data.user.profilePic.lenght > 0)
-                setUserImage(res.data.user.profilePic)
+            if(res.data.user.profilePic.length>0){
+            setUserImage(res.data.user.profilePic)
+            }
             setUserExist(true);
         }
         else {
@@ -79,6 +79,20 @@ export default function UserProfile({params}: any) {
     }
 
     return (
+        <main>
+        <div className="flex flex-row  bg-black h-16 w-full">
+                <div className="flex  items-center justify-center w-1/3 h-full  bg-blue-800">
+                <Link className="text-black flex  items-center justify-center  font-bold text-2xl w-full h-full " href={`/`}>HOME</Link>
+                </div>
+                <div className="flex  items-center justify-center w-1/3 h-full   bg-white">
+                <Link className="text-black flex  items-center justify-center  font-bold text-2xl w-full h-full bg-green-800 " href={`/profile/${data}`}>my profile</Link>
+                    </div>
+                <div className="flex  items-center justify-center w-1/3 h-full   bg-red-500 font-bold">
+            <button className=" text-black text-2xl w-full h-full " onClick={logout}>
+                logout
+                </button>
+                    </div>
+            </div>
         <div className="flex flex-col items-center justify-center py-2">
             <h1>Profile</h1>
             <img src={imageUrl} alt="user image" className="w-1/3 h-1/4 rounded-full"/>
@@ -90,13 +104,11 @@ export default function UserProfile({params}: any) {
             <UploadButton
                 endpoint="imageUploader"
                 onClientUploadComplete={(res:any) => {
-                // Do something with the response
-                updateUserProfilePic(res[0].fileUrl);
+                    updateUserProfilePic(res[0].fileUrl);
                 }}
                 onUploadError={(error: Error) => {
-                // Do something with the error.
                 console.log(error);
-                }}
+            }}
             />
             </div>
                 <div className="flex flex-col items-center justify-center  py-2">
@@ -105,7 +117,6 @@ export default function UserProfile({params}: any) {
             </div>
             : null}
         </div>
+            </main>
     );
 }
-
-        

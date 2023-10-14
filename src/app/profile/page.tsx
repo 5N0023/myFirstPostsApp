@@ -26,12 +26,20 @@ export default function Profile() {
     },[])
     
     return (
-        <div className="bg-black flex flex-col items-center justify-center min-h-screen py-2">
-            <h1 className=" text-white text-2xl font-bold">profile</h1>
-            <h2 className="text-white"> {<Link href={`/profile/${data}`}>My Profile </Link> } </h2>
-        <button className=" text-red-500 animate-bounce" onClick={logout}>
-            logout
-            </button>
-        </div>
+        <main>
+            <div className="flex flex-row  bg-black h-16 w-full">
+                <div className="flex  items-center justify-center w-1/3 h-full  bg-blue-800">
+                <Link className="text-black flex  items-center justify-center  font-bold text-2xl w-full h-full " href={`/`}>HOME</Link>
+                </div>
+                <div className="flex  items-center justify-center w-1/3 h-full   bg-white">
+                <Link className="text-black flex  items-center justify-center  font-bold text-2xl w-full h-full bg-green-800 " href={`/profile/${data}`}>my profile</Link>
+                    </div>
+                <div className="flex  items-center justify-center w-1/3 h-full   bg-red-500 font-bold">
+            <button className=" text-black text-2xl w-full h-full " onClick={logout}>
+                logout
+                </button>
+                    </div>
+            </div>
+        </main>
     );
 }
