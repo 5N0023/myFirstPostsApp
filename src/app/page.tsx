@@ -17,6 +17,7 @@ export default function Profile() {
     const [postImageUrl,setPostImageUrl] =useState<string>("");
     const [error, setError] = useState<string>("");
     const [disable,setDisable] = useState<boolean>(false);
+    const [_id,set_id] = useState<string>("");
     const logout = async () => {
         try {
             await axios.get("/api/users/logout");
@@ -30,6 +31,7 @@ export default function Profile() {
     const getUserDetails = async () => {
         const res = await axios.get("/api/users/me");
         setData(res.data.data.username);
+        set_id(res.data.data._id);
     }
 
     const handlePostInput = (e: any) => {
@@ -61,6 +63,17 @@ export default function Profile() {
         setPostDesc("");
         setPostImageUrl("");
         setDisable(false);
+    }
+
+    const likePost = async (postID:string)=>{
+        try{
+            const res = await axios.post("/api/posts/likePost",{postID:postID, _id:_id});
+            setRefresh(!refresh);
+        }
+        catch(err)
+        {
+            console.log(err);
+        }
     }
 
     useEffect(() => {
@@ -129,6 +142,14 @@ export default function Profile() {
                             {post.img.length ? (
                                 <img className="w-1/2 h-1/2 py-2" src={post.img} alt="post img" />
                             ) : null}
+                            <div id="Likes" className="flex flex-row items-center justify-center py-2 w-full px-2 border-2 border-blue-500 bg-slate-500">
+                                <h1 className="text-black py-2 px-2">Likes: {post.likes.length}</h1>
+                                {post.likes.includes(_id) ? (
+                                    <button className="py-2 bg-blue-800 text-white   w-full h-full" onClick={()=>likePost(post._id)}>unlike</button>
+                                ) : (
+                                    <button className="py-2 bg-blue-800 text-white   w-full h-full" onClick={()=>likePost(post._id)}>like</button>
+                                )}
+                            </div>
                         </div>
                     );
                 }) : <h1>no posts</h1>}
