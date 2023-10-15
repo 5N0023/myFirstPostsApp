@@ -7,7 +7,6 @@ connect();
 export const revalidate=0 ;
 export const dynamic = "force-dynamic";
 
-// Check if user exists and return the last 10 posts
 export  async function  POST (req: NextRequest) {
     try {
         const reqBody = await req.json();
@@ -21,7 +20,6 @@ export  async function  POST (req: NextRequest) {
         const res = NextResponse.json({ message: "Posts found", posts }, { status: 200 });
         // vercel cache Disable
 
-        //Cache-Control: s-maxage=60 Vercel-CDN-Cache-Control: max-age=300, s-maxage=1
         res.headers.set('Cache-Control', 's-maxage=0');
         res.headers.set('Vercel-CDN-Cache-Control', 'max-age=0, s-maxage=0');
         

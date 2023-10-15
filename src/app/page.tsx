@@ -7,6 +7,16 @@ import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import { UploadButton } from "../utils/uploadthing";
 
+interface Post {
+    username: string;
+    desc: string;
+    img: string;
+    likes: string[];
+    comments: string[];
+    NumberOfComments: number;
+    NumberOfCommentsShowen : number;
+  }
+
 export default function Profile() {
     const router = useRouter();
     const [postsNumber,setPostNumbers] = useState<number>(10);
@@ -15,6 +25,7 @@ export default function Profile() {
     const [refresh,setRefresh] = useState<boolean>(false);
     const [postDesc, setPostDesc] = useState<string>("")
     const [postImageUrl,setPostImageUrl] =useState<string>("");
+    const [comment,setComment] = useState<string>("");
     const [error, setError] = useState<string>("");
     const [disable,setDisable] = useState<boolean>(false);
     const [_id,set_id] = useState<string>("");
@@ -37,12 +48,33 @@ export default function Profile() {
     const handlePostInput = (e: any) => {
         setPostDesc(e.target.value);
     }
-    const getPosts = async () => {
-        const res = await axios.post("/api/posts/getLastPosts",{postNumber : postsNumber});
-        setPosts(res.data.posts);
+    const handleCommentInput = (e: any) => {
+        setPostDesc(e.target.value);
     }
+  
+    const getPosts = async () => {
+        const res = await axios.post("/api/posts/getLastPosts", { postNumber: postsNumber });
+      
+        const data = res.data.posts.map((post: Post) => {
+          // Preserve the existing NumberOfCommentsShowen value
+          const numberOfCommentsShowen = post.NumberOfCommentsShowen;
+      
+          return {
+            ...post,
+            NumberOfComments: post.comments.length,
+            NumberOfCommentsShowen: numberOfCommentsShowen,
+          };
+        });
+      
+        data.forEach((post: Post) => {
+          post.comments.reverse();
+        });
+      
+        setPosts(data);
+      }
+      
     const createNewPost = async ()=>{
-        setRefresh(true);
+        setRefresh(!refresh);
         if((postDesc.length === 0 && postImageUrl.length === 0) || disable)
         {
             setError("post must have desc or image");
@@ -50,10 +82,10 @@ export default function Profile() {
         }
         const NewPost ={username:data ,desc:postDesc,img:postImageUrl}
         try{
-            setDisable(true);
+            setDisable(!refresh);
             const res = await axios.post("/api/posts/newPost",NewPost)
             if(res)
-                setRefresh(false);
+                setRefresh(!refresh);
             console.log(res);
         }
         catch(err)
@@ -62,7 +94,24 @@ export default function Profile() {
         }
         setPostDesc("");
         setPostImageUrl("");
-        setDisable(false);
+        setDisable(!refresh);
+    }
+
+    const submitNewComment = async (post:any)=>{
+        if(comment.length === 0)
+        return;
+    const NewComment ={ postID :post._id, _id:_id ,comment:comment, createdAt: new Date()}
+    console.log(NewComment);
+    try{
+        const res = await axios.post("/api/posts/newComment",NewComment)
+        console.log(res);
+    }
+    catch(err)
+    {
+        console.log(err);
+    }
+    setRefresh(!refresh);
+        setComment("");
     }
 
     const likePost = async (postID:string)=>{
@@ -129,26 +178,60 @@ export default function Profile() {
                     </div>
                 <div className="flex flex-col items-center justify-center w-2/4 px-2 py-8">
                 {posts.length !== 0 ? posts.map((post: any, key: number) => {
+                    const postID = post._id;
                     return (
                         <div className="flex flex-col items-center justify-center py-2 m-2 w-full px-2 border-2 border-black" key={key}>
                             <div className="flex flex-row items-center justify-center py-2 w-full px-2 border-2 border-blue-500 bg-slate-500">
-                            <Link className="text-black flex  items-center justify-center  font-bold text-2xl w-full h-full " href={`/profile/${post.username}`}>{post.username}</Link>
+                                <Link className="text-black flex  items-center justify-center  font-bold text-2xl w-full h-full " href={`/profile/${post.username}`}>{post.username}</Link>
                             </div>
                             <div className="flex flex-row items-center justify-center py-2 w-full px-2 border-2 border-blue-500 bg-slate-500">
-                            <h1 className="text-black py-2"> At: {new Date(post.createdAt).toLocaleString()}</h1>
-                                </div>
-                            { post.desc.length ? (
-                            <h1 className="text-black py-2 bg-slate-400 w-full h-full px-2  flex flex-row items-center justify-center">{post.desc}</h1>) : null}
-                            {post.img.length ? (
-                                <img className="w-1/2 h-1/2 py-2" src={post.img} alt="post img" />
-                            ) : null}
+                                <h1 className="text-black py-2"> At: {new Date(post.createdAt).toLocaleString()}</h1>
+                            </div>
+                                { post.desc.length ? (
+                                <h1 className="text-black py-2 bg-slate-400 w-full h-full px-2  flex flex-row items-center justify-center">{post.desc}</h1>) : null}
+                                {post.img.length ? (
+                                    <img className="w-full h-full py-2" src={post.img} alt="post img" />
+                                ) : null}
                             <div id="Likes" className="flex flex-row items-center justify-center py-2 w-full px-2 border-2 border-blue-500 bg-slate-500">
-                                <h1 className="text-black py-2 px-2">Likes: {post.likes.length}</h1>
-                                {post.likes.includes(_id) ? (
-                                    <button className="py-2 bg-blue-800 text-white   w-full h-full" onClick={()=>likePost(post._id)}>unlike</button>
-                                ) : (
-                                    <button className="py-2 bg-blue-800 text-white   w-full h-full" onClick={()=>likePost(post._id)}>like</button>
-                                )}
+                                    <h1 className="text-black py-2 px-2">Likes: {post.likes.length}</h1>
+                                    {post.likes.includes(_id) ? (
+                                        <button className="py-2 bg-blue-800 text-white   w-full h-full" onClick={()=>likePost(post._id)}>unlike</button>
+                                    ) : (
+                                        <button className="py-2 bg-blue-800 text-white   w-full h-full" onClick={()=>likePost(post._id)}>like</button>
+                                    )}
+                            </div>
+                                    <div id="comments" className="flex flex-col items-center justify-center py-2 px-2 border-2 border-blue-500 bg-slate-500 w-full ">
+                                        <h1 className="text-black py-2 px-2">comments: {post.NumberOfComments}</h1>
+                                        <div className="flex flex-col items-center justify-center py-2 w-full px-2 border-2 border-blue-500 bg-slate-500">
+                                        {post.comments.length ? (
+                                            <div className="comment-container w-full">
+                                            {post.comments.map((comment: any, key: number) => (
+                                                <div className="flex flex-row items-center justify-center py-2 px-2 border-2 border-blue-500 bg-slate-500 w-full" key={key}>
+                                                <h1 className="text-black py-2 px-2">{comment.username} {new Date(comment.createdAt).toLocaleString()} : {comment.comment}</h1>
+                                                </div>
+                                            ))}
+                                            </div>
+                                        ) : null}
+                                        </div>
+                                        <div className="flex flex-row items-center justify-center py-2 w-full px-2 border-2 border-blue-500 bg-slate-500 ">
+                                        <form className="flex flex-col items-center justify-center py-2 w-full px-2 border-2 border-blue-500 bg-slate-500 ">
+                                            <input
+                                                className="text-black py-2 px-4 rounded-lg border-2 border-black w-full h-16"
+                                                type="text"
+                                                placeholder="comment"
+                                                onChange={(e) => setComment(e.target.value)}
+                                            />
+                                            <button
+                                                className="py-2 px-4 bg-blue-800 text-white w-full h-full"
+                                                type="button"
+                                                onClick={async (e) => {
+                                                await submitNewComment(post);
+                                                e.target.form.reset();
+                                                }}>
+                                                comment
+                                            </button>
+                                            </form>
+                            </div>
                             </div>
                         </div>
                     );

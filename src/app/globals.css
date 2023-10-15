@@ -2,5 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-
+.comment-container {
+    max-height: 200px; /* Adjust the desired fixed height here */
+    overflow-y: auto;
+  }
+  
+  .comment-container::-webkit-scrollbar {
+    width: 0.5rem; /* Adjust the scrollbar width as needed */
+  }
+  
+  .comment-container::-webkit-scrollbar-thumb {
+    background: #888; /* Adjust the scrollbar thumb color */
+  }
+  
+  .comment-container::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Adjust the scrollbar thumb color on hover */
+  }
+  
 @import "~@uploadthing/react/styles.css"
