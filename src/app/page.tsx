@@ -226,7 +226,7 @@ export default function Profile() {
                                                 type="button"
                                                 onClick={async (e) => {
                                                 await submitNewComment(post);
-                                                e.target.form.reset();
+                                                document.forms[0].reset(); 
                                                 }}>
                                                 comment
                                             </button>
